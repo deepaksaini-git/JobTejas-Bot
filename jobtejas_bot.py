@@ -88,28 +88,24 @@ def track_updates():
         with open(file_name, "r", encoding="utf-8") as f:
             seen_links = set(f.read().splitlines())
 
-    while True:
-        print(f"\n[{time.strftime('%H:%M:%S')}] Nayi Checking Shuru...")
+        # Yahan se while True hata diya gaya hai
+    for site_name, site_url in SITES_TO_TRACK.items():
+        print(f"Checking {site_name}...")
+        notices = get_latest_updates(site_name, site_url)
         
-        for site_name, site_url in SITES_TO_TRACK.items():
-            print(f"Checking {site_name}...")
-            notices = get_latest_updates(site_name, site_url)
-            
-            for text, href in notices:
-                if href not in seen_links:
-                    message = f"🚨 <b>{site_name} - Naya Update!</b>\n\n📌 {text}\n🔗 Link: {href}\n\nJobTejas par jaldi update karein!"
-                    send_telegram_message(message)
-                    
-                    seen_links.add(href)
-                    
-                    with open(file_name, "a", encoding="utf-8") as f:
-                        f.write(href + "\n")
-            
-            time.sleep(2)
-            
-        print("Sari websites check ho gayin. Agli checking theek 6 ghante baad.")
-        # Din mein 4 baar = Har 6 ghante mein = 21600 seconds
-        time.sleep(21600) 
+        for text, href in notices:
+            if href not in seen_links:
+                message = f"🚨 <b>{site_name} - Naya Update!</b>\n\n📌 {text}\n🔗 Link: {href}\n\nJobTejas par jaldi update karein!"
+                send_telegram_message(message)
+                
+                seen_links.add(href)
+                
+                with open(file_name, "a", encoding="utf-8") as f:
+                    f.write(href + "\n")
+        
+        time.sleep(2)
+        
+    print("Checking complete. GitHub action band ho raha hai.")
 
 if __name__ == "__main__":
     track_updates()
