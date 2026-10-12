@@ -31,7 +31,9 @@ SITES_TO_TRACK = {
     "UPSSSC": "https://upsssc.gov.in/",
     "BPSC": "https://bpsc.bih.nic.in/",
     "SSC": "https://ssc.gov.in/",
-    "Sarkari Result": "https://www.sarkariresult.com/"
+    "Sarkari Result": "https://www.sarkariresult.com/",
+    "JobTejas 1": "https://jobtejas.blogspot.com",
+    "JobTejas 2": "https://jobtejas-com.blogspot.com"
 }
 
 HEADERS = {
