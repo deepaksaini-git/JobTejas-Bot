@@ -2,7 +2,7 @@ name: JobTejas Bot Auto-Runner
 
 on:
   schedule:
-    - cron: '0 */6 * * *'  # Ye command ise har 6 ghante mein chalayegi
+    - cron: '0 */*/5 * * * *'  # Ye command ise har 6 ghante mein chalayegi
   workflow_dispatch:       # Isse aap jab chahein button dabakar manual run bhi kar sakte hain
 
 jobs:
