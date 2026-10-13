@@ -34,7 +34,11 @@ SITES_TO_TRACK = {
     "Sarkari Result": "https://www.sarkariresult.com/",
     "JobTejas 1": "https://jobtejas.blogspot.com",
     "JobTejas 2": "https://jobtejas-com.blogspot.com",
-    "JobTejas 3": "http://jobtejas.great-site.net/"
+    "JobTejas 3": "http://jobtejas.great-site.net/",
+    "https://sarkariresult.com.cm/",
+    "Sarkari Result 2": "https://sarkariresult.com.cm/",
+    "Free Job Alert": "https://www.freejobalert.com/"
+
 }
 
 HEADERS = {
