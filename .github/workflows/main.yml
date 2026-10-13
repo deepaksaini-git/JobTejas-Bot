@@ -35,4 +35,9 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add seen_links.txt
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Updated seen_links.txt" && git push)
+          git commit -m "Updated seen_links.txt" || echo "No changes to commit"
+          
+          # Push karne se pehle repo ko sync karna taaki fetch/push error na aaye
+          git pull --rebase origin main
+          
+          git push
