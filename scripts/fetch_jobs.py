@@ -88,6 +88,7 @@ def main():
             print("FAIL", s["name"], e); continue
         for title, link in found:
             title = html.unescape(title)
+            if category(title) == "Update": continue
             jid = hashlib.sha1(re.sub(r"\W+", "", title.lower()).encode()).hexdigest()[:16]
             if jid in seen: continue
             seen.add(jid)
