@@ -1,0 +1,19 @@
+{% assign u = site.data.updates %}
+{% assign boxes = "job|Latest Jobs|#2347c5,result|Results|#0f8a5f,admit_card|Admit Card|#c2410c,answer_key|Answer Key|#7c3aed,syllabus|Syllabus|#0e7490,admission|Admission|#a16207" | split: "," %}
+<style>
+.ub{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0}
+.ub-box{background:#fff;border:1px solid #dfe3ee;border-top:4px solid var(--c);border-radius:6px;min-width:0}
+.ub-box h3{margin:0;padding:6px 10px;font-size:1rem;color:var(--c)}
+.ub-box ul{list-style:none;margin:0;padding:0 10px 6px}
+.ub-box li{padding:5px 0;border-top:1px solid #eef0f6;font-size:.92rem;line-height:1.35}
+.ub-box a{color:#1b2033;text-decoration:none}.ub-box a:hover{color:var(--c);text-decoration:underline}
+.ub-box .e{color:#7a8199}
+@media(max-width:900px){.ub{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.ub{grid-template-columns:1fr}}
+</style>
+<section class="ub">
+{% for b in boxes %}{% assign p = b | split: "|" %}{% assign list = u[p[0]] %}
+<div class="ub-box" style="--c:{{ p[2] }}"><h3>{{ p[1] }}</h3>
+<ul>{% for i in list limit:10 %}<li><a href="{{ i.link }}" target="_blank" rel="noopener nofollow">{{ i.title | escape }}</a></li>{% else %}<li class="e">Abhi koi update nahi</li>{% endfor %}</ul></div>
+{% endfor %}
+</section>
