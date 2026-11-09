@@ -1,5 +1,5 @@
 """Govt job updates: sources.json se fetch -> dedupe -> jobs.json + Telegram."""
-import json, os, re, time, hashlib, html, urllib.request, urllib.parse
+import urllib.error, json, os, re, time, hashlib, html, urllib.request, urllib.parse
 import xml.etree.ElementTree as ET
 from html.parser import HTMLParser
 from datetime import datetime, timezone
@@ -68,8 +68,11 @@ def parse_html(txt, base):
 def tg(token, chat, text):
     data = urllib.parse.urlencode({"chat_id": chat, "text": text, "parse_mode": "HTML",
                                    "disable_web_page_preview": "true"}).encode()
-    urllib.request.urlopen(urllib.request.Request(
-        f"https://api.telegram.org/bot{token}/sendMessage", data=data), timeout=25)
+    try:
+        urllib.request.urlopen(urllib.request.Request(
+            f"https://api.telegram.org/bot{token}/sendMessage", data=data), timeout=25)
+    except urllib.error.HTTPError as e:
+        raise RuntimeError(e.read().decode("utf-8", "ignore"))
 
 def main():
     cfg = json.load(open(os.path.join(ROOT, "sources.json"), encoding="utf-8"))
@@ -96,6 +99,14 @@ def main():
     json.dump({"updated": datetime.now(timezone.utc).isoformat(timespec="minutes"), "items": items},
               open(JOBS, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     token, chat = os.getenv("TELEGRAM_BOT_TOKEN"), os.getenv("TELEGRAM_CHAT_ID")
+    print("Telegram secrets mile:", bool(token and chat))
+    if os.getenv("TG_TEST") == "1":
+        if not (token and chat):
+            print("SECRETS MISSING: TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID check karo"); return
+        for it in items[:3]:
+            try: tg(token, chat, f"<b>[TEST · {it['category']}]</b> {html.escape(it['title'])}\n{it['link']}"); time.sleep(1.2)
+            except Exception as e: print("TG FAIL", e)
+        print("Test messages bheje gaye"); return
     if old is None:
         print("Pehli run: purane items sirf save kiye, Telegram par nahi bheje."); return
     if token and chat:
