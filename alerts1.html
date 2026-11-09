@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sarkari Job Alerts</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--ink:#1b2033;--mute:#5d6580;--line:#e1e4ef;--ac:#2347c5;
+--Job:#2347c5;--Result:#0f8a5f;--AdmitCard:#c2410c;--AnswerKey:#7c3aed;--Syllabus:#0e7490;--Admission:#a16207;--Update:#64748b}
+@media(prefers-color-scheme:dark){:root{--bg:#10131f;--card:#181c2c;--ink:#e8eaf4;--mute:#9aa3c0;--line:#2a3050;--ac:#7f9cff}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.5 Hind,system-ui,sans-serif}
+header,main{max-width:860px;margin:auto;padding:0 14px}
+header{padding-top:22px}
+h1{font-size:1.5rem;margin:0 0 2px}
+#stamp{color:var(--mute);font-size:.88rem;margin:0 0 14px}
+.bar{display:flex;gap:8px;flex-wrap:wrap;position:sticky;top:0;background:var(--bg);padding:8px 0;z-index:2}
+input{flex:1 1 200px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font:inherit}
+button{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:7px 12px;border-radius:8px;font:inherit;cursor:pointer}
+button[aria-pressed=true]{background:var(--ac);color:#fff;border-color:var(--ac)}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+ul{list-style:none;margin:8px 0 40px;padding:0}
+li{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--c,var(--Update));border-radius:8px;padding:10px 14px;margin-bottom:8px}
+li a{color:var(--ink);font-weight:600;text-decoration:none}
+li a:hover{color:var(--ac);text-decoration:underline}
+.m{color:var(--mute);font-size:.84rem;margin-top:2px}
+.m b{color:var(--c);font-weight:600}
+.empty{color:var(--mute);padding:30px 0;text-align:center}
+</style>
+</head>
+<body>
+<header>
+  <h1>Sarkari Job Alerts</h1>
+  <p id="stamp">Loading…</p>
+  <div class="bar">
+    <input id="q" type="search" placeholder="Search: railway, SSC, police, UP…" aria-label="Search">
+    <span id="chips"></span>
+  </div>
+</header>
+<main><ul id="list"></ul></main>
+<script>
+const CATS=["All","Job","Result","Admit Card","Answer Key","Syllabus","Admission"];
+let items=[],cat="All";
+const $=s=>document.querySelector(s);
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function ago(t){const m=(Date.now()-new Date(t))/6e4;
+  return m<60?Math.max(1,m|0)+" min ago":m<1440?(m/60|0)+" hr ago":(m/1440|0)+" day ago"}
+function draw(){
+  const q=$("#q").value.toLowerCase();
+  const rows=items.filter(i=>(cat==="All"||i.category===cat)&&(i.title+i.source).toLowerCase().includes(q));
+  $("#list").innerHTML=rows.length?rows.map(i=>
+    `<li style="--c:var(--${i.category.replace(" ","")})"><a href="${esc(i.link)}" target="_blank" rel="noopener">${esc(i.title)}</a>
+     <div class="m"><b>${i.category}</b> · ${esc(i.source)} · ${ago(i.time)}</div></li>`).join("")
+    :'<p class="empty">Koi update nahi mila. Search ya filter badal ke dekho.</p>';
+}
+$("#chips").innerHTML=CATS.map(c=>`<button aria-pressed="${c==="All"}">${c}</button>`).join(" ");
+$("#chips").onclick=e=>{if(e.target.tagName!=="BUTTON")return;cat=e.target.textContent;
+  document.querySelectorAll("#chips button").forEach(b=>b.setAttribute("aria-pressed",b.textContent===cat));draw()};
+$("#q").oninput=draw;
+fetch("jobs.json?"+Date.now()).then(r=>r.json()).then(d=>{items=d.items;
+  $("#stamp").textContent="Last checked "+ago(d.updated)+" · "+items.length+" updates";draw()})
+ .catch(()=>{$("#stamp").textContent="jobs.json abhi available nahi hai. Pehle GitHub Action chalao."});
+</script>
+</body>
+</html>
