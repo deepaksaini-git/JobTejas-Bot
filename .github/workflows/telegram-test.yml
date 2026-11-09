@@ -1,0 +1,14 @@
+name: Telegram Test
+on: workflow_dispatch
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send test message
+        env:
+          T: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          C: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          echo "Token set: $([ -n "$T" ] && echo yes || echo NO)"
+          echo "Chat ID set: $([ -n "$C" ] && echo yes || echo NO)"
+          curl -s -X POST "https://api.telegram.org/bot$T/sendMessage" -d chat_id="$C" -d text="Test message from JobTejas-Bot ✅"
